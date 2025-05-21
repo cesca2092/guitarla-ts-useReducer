@@ -1,26 +1,23 @@
-import type { CartItem, Guitar } from "../types"
+import { ActionDispatch, useMemo } from "react"
+import type { CartItem } from "../types"
+import { CartActions } from "../reducers/cart-reducer"
 
 type HeaderProps = {
-  total: number
-  isEmpty: boolean
   cart: CartItem[]
-  cleanCart: () => void
-  removeFromCart: (id: Guitar['id']) => void
-  increaseQuantity: (id: Guitar['id']) => void
-  decreaseQuantity: (id: Guitar['id']) => void
+  dispatch: ActionDispatch<[action: CartActions]>
 }
 
 const Header = (props: HeaderProps) => {
 
   const {
     cart,
-    total,
-    isEmpty,
-    cleanCart,
-    removeFromCart,
-    increaseQuantity,
-    decreaseQuantity,
+    dispatch,
   } = props
+
+
+  // State Derivado
+  const isEmpty = useMemo(() => cart.length === 0, [cart])
+  const total = useMemo(() => cart.reduce((prev, curr) => prev + curr.price * curr.quantity, 0), [cart])
 
   return (
     <header className="py-5 header">
@@ -66,7 +63,7 @@ const Header = (props: HeaderProps) => {
                                 <button
                                   type="button"
                                   className="btn btn-dark"
-                                  onClick={() => decreaseQuantity(item.id)}
+                                  onClick={() => dispatch({ type: "decrease-quantity", payload: { id: item.id } })}
                                 >
                                   -
                                 </button>
@@ -74,7 +71,7 @@ const Header = (props: HeaderProps) => {
                                 <button
                                   type="button"
                                   className="btn btn-dark"
-                                  onClick={() => increaseQuantity(item.id)}
+                                  onClick={() => dispatch({ type: "increase-quantity", payload: { id: item.id } })}
                                 >
                                   +
                                 </button>
@@ -83,7 +80,7 @@ const Header = (props: HeaderProps) => {
                                 <button
                                   className="btn btn-danger"
                                   type="button"
-                                  onClick={() => removeFromCart(item.id)}
+                                  onClick={() => dispatch({ type: "remove-from-cart", payload: { id: item.id } })}
                                 >
                                   X
                                 </button>
@@ -101,7 +98,7 @@ const Header = (props: HeaderProps) => {
 
                 <button
                   className="btn btn-dark w-100 mt-3 p-2"
-                  onClick={cleanCart}
+                  onClick={() => dispatch({ type: "clean-cart" })}
                 >
                   Vaciar Carrito
                 </button>

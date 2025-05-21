@@ -1,3 +1,6 @@
+import { ActionDispatch } from "react"
+import { CartActions } from "../reducers/cart-reducer"
+
 export type Guitar = {
   id: number
   name: string
@@ -9,7 +12,7 @@ export type Guitar = {
 
 export type GuitarProps = {
   guitar: Guitar,
-  addToCart: (item: Guitar) => void
+  dispatch: ActionDispatch<[action: CartActions]>
 }
 
 export type CartItem = Guitar & {
